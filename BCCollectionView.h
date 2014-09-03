@@ -11,7 +11,7 @@
 @class BCCollectionViewLayoutManager;
 @interface BCCollectionView : NSView
 {
-  IBOutlet __unsafe_unretained id<BCCollectionViewDelegate> delegate;
+  IBOutlet __weak id<BCCollectionViewDelegate> delegate;
   BCCollectionViewLayoutManager *layoutManager;
   
   NSArray *contentArray;
@@ -43,7 +43,7 @@
   
   NSString *accumulatedKeyStrokes;
 }
-@property (nonatomic, unsafe_unretained) id<BCCollectionViewDelegate> delegate;
+@property (nonatomic, weak) id<BCCollectionViewDelegate> delegate;
 @property (nonatomic, strong) NSColor *backgroundColor;
 @property (nonatomic) NSUInteger numberOfPreRenderedRows;
 

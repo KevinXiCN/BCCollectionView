@@ -11,10 +11,10 @@ typedef void(^BCCollectionViewLayoutOperationIterator)(BCCollectionViewLayoutIte
 {
   BCCollectionViewLayoutOperationIterator layoutCallBack;
   dispatch_block_t layoutCompletionBlock;
-  BCCollectionView *__unsafe_unretained collectionView;
+  BCCollectionView *__weak collectionView;
 }
 @property (copy) BCCollectionViewLayoutOperationIterator layoutCallBack;
 @property (copy) dispatch_block_t layoutCompletionBlock;
-@property (unsafe_unretained) BCCollectionView *collectionView;
+@property (weak) BCCollectionView *collectionView;
 
 @end
