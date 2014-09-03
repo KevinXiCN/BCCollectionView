@@ -578,6 +578,7 @@
 	{
 			[self addMissingViewControllersToView];
 	}
+    [self addMissingGroupHeaders];
   if ([delegate respondsToSelector:@selector(collectionViewDidScroll:inDirection:)]) {
     if ([self visibleRect].origin.y > previousFrameBounds.origin.y)
       [delegate collectionViewDidScroll:self inDirection:BCCollectionViewScrollDirectionDown];
