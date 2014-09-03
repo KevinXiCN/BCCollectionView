@@ -514,7 +514,9 @@
 
 - (void)reloadDataWithItems:(NSArray *)newContent groups:(NSArray *)newGroups emptyCaches:(BOOL)shouldEmptyCaches completionBlock:(dispatch_block_t)completionBlock
 {
-  [self deselectAllItems];
+  // soft reload usually means we added items to the view. which is why we won't deselect then
+    if (shouldEmptyCaches)
+        [self deselectAllItems];
   [layoutManager cancelItemEnumerator];
   
   if (!delegate)
@@ -548,7 +550,8 @@
   } else
     [self softReloadVisibleViewControllers];
   
-  [selectionIndexes removeAllIndexes];
+    if (shouldEmptyCaches)
+        [selectionIndexes removeAllIndexes];
   
   NSRect visibleRect = [self visibleRect];
   [layoutManager enumerateItems:^(BCCollectionViewLayoutItem *layoutItem) {
