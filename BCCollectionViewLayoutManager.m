@@ -13,6 +13,7 @@
 {
   self = [super init];
   if (self) {
+    self.maxColumns = INT_MAX;
     collectionView = aCollectionView;
     queue = [[NSOperationQueue alloc] init];
     [queue setMaxConcurrentOperationCount:1];
@@ -43,7 +44,7 @@
 
 - (NSUInteger)maximumNumberOfItemsPerRow
 {
-  return MAX(1, [collectionView frame].size.width/[self cellSize].width);
+  return MIN(self.maxColumns, MAX(1, [collectionView frame].size.width/[self cellSize].width));
 }
 
 - (NSUInteger)numberOfRows

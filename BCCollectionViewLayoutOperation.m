@@ -63,11 +63,12 @@
     BCCollectionViewLayoutItem *item = [BCCollectionViewLayoutItem layoutItem];
     [item setItemIndex:i];
     if (![group isCollapsed]) {
-      if (x + cellSize.width > NSMaxX(visibleRect)) {
-        numberOfRows++;
-        colIndex = 0;
-        y += cellSize.height;
-        x  = startingX;
+        // next row, but only if this isn't the first item in our row.
+        if (x + cellSize.width > NSMaxX(visibleRect) && colIndex > 0) {
+            numberOfRows++;
+            colIndex = 0;
+            y += cellSize.height;
+            x  = startingX;
       }
       [item setColumnIndex:colIndex];
       [item setItemRect:NSMakeRect(x, y, cellSize.width, cellSize.height)];

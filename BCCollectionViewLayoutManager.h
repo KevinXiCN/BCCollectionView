@@ -12,6 +12,7 @@
   
   NSArray *itemLayouts;
 }
+@property (assign) NSUInteger maxColumns;
 @property (strong) NSArray *itemLayouts;
 - (id)initWithCollectionView:(BCCollectionView *)collectionView; //assigned
 - (void)cancelItemEnumerator;

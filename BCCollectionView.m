@@ -11,6 +11,9 @@
 - (void)configureView;
 @end
 
+//#define CDBG() NSLog(@"%@",[NSThread callStackSymbols]); NSLog(@"%s", _cmd); NSLog(@"------------------------");
+#define CDBG() while (0) {};
+
 
 @implementation BCCollectionView
 @synthesize delegate, contentArray, groups, backgroundColor, originalSelectionIndexes, zoomValueObserverKey, accumulatedKeyStrokes, numberOfPreRenderedRows, layoutManager;
@@ -148,6 +151,7 @@
 
 - (void)delegateUpdateSelectionForItemAtIndex:(NSUInteger)index
 {
+    if ([contentArray count] <= index)return;
   if ([delegate respondsToSelector:@selector(collectionView:updateViewControllerAsSelected:forItem:)])
     [delegate collectionView:self updateViewControllerAsSelected:[self viewControllerForItemAtIndex:index]
                forItem:[contentArray objectAtIndex:index]];
@@ -155,6 +159,7 @@
 
 - (void)delegateUpdateDeselectionForItemAtIndex:(NSUInteger)index
 {
+    if ([contentArray count] <= index)return;
   if ([delegate respondsToSelector:@selector(collectionView:updateViewControllerAsDeselected:forItem:)])
     [delegate collectionView:self updateViewControllerAsDeselected:[self viewControllerForItemAtIndex:index]
                forItem:[contentArray objectAtIndex:index]];
@@ -204,7 +209,8 @@
 {
   NSArray *itemLayouts = [layoutManager itemLayouts];
   NSIndexSet *visibleIndexes = [itemLayouts indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(id itemLayout, NSUInteger idx, BOOL *stop) {
-    return NSIntersectsRect([itemLayout itemRect], aRect);
+      //return (NSPointInRect([itemLayout itemRect].origin, aRect));
+      return (NSIntersectsRect([itemLayout itemRect], aRect));
   }];
   return visibleIndexes;
 }
@@ -221,6 +227,9 @@
 - (NSRange)rangeOfVisibleItems
 {
   NSIndexSet *visibleIndexes = [self indexesOfItemsInRect:[self visibleRect]];
+//    NSLog(@"************ rangeOfVisibleIndexes: %@", visibleIndexes);
+//    NSLog(@"************ self-sizse: %@ superview-size: %@", [NSValue valueWithRect:self.frame],
+//          [NSValue valueWithRect:self.superview.frame]);
   return NSMakeRange([visibleIndexes firstIndex], [visibleIndexes lastIndex]-[visibleIndexes firstIndex]);
 }
 
@@ -315,10 +324,15 @@
 			[visibleViewControllers setObject:viewController forKey:[NSNumber numberWithInteger:anIndex]];
 			[[viewController view] setFrame:aRect];
 			[[viewController view] setAutoresizingMask:NSViewMaxXMargin | NSViewMaxYMargin];
+            //NSLog(@"place view controller in: %@", [NSValue valueWithRect:aRect]);
 
 			id itemToLoad = [contentArray objectAtIndex:anIndex];
 			[delegate collectionView:self willShowViewController:viewController forItem:itemToLoad atIndex:anIndex];
 			[self addSubview:[viewController view]];
+            /*dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.02 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [viewController.view setNeedsDisplay:YES];
+                [viewController.view.layer setNeedsDisplay];
+            });*/
 			if ([selectionIndexes containsIndex:anIndex])
 			[self delegateUpdateSelectionForItemAtIndex:anIndex];
 		}
@@ -468,6 +482,7 @@
 
 - (void)softReloadVisibleViewControllers
 {
+   CDBG()
   NSMutableArray *removeKeys = [NSMutableArray array];
   
   for (NSString *number in visibleViewControllers) {
@@ -514,6 +529,8 @@
 
 - (void)reloadDataWithItems:(NSArray *)newContent groups:(NSArray *)newGroups emptyCaches:(BOOL)shouldEmptyCaches completionBlock:(dispatch_block_t)completionBlock
 {
+    
+   CDBG()
   // soft reload usually means we added items to the view. which is why we won't deselect then
     if (shouldEmptyCaches)
         [self deselectAllItems];
@@ -522,9 +539,9 @@
   if (!delegate)
     return;
   
-  NSSize cellSize = [delegate cellSizeForCollectionView:self];
-  if (NSWidth([self frame]) < cellSize.width || NSHeight([self frame]) < cellSize.height)
-    return;
+  //NSSize cellSize = [delegate cellSizeForCollectionView:self];
+  //if (NSWidth([self frame]) < cellSize.width || NSHeight([self frame]) < cellSize.height)
+  //  return;
   
   for (BCCollectionViewGroup *group in groups)
     [group removeObserver:self forKeyPath:@"isCollapsed"];
@@ -559,7 +576,7 @@
     if (viewController) {
       [[viewController view] setFrame:[layoutItem itemRect]];
       [delegate collectionView:self willShowViewController:viewController forItem:[contentArray objectAtIndex:[layoutItem itemIndex]] atIndex:[layoutItem itemIndex]];
-    } else if (NSIntersectsRect(visibleRect, [layoutItem itemRect]))
+    } else if (NSIntersectsRect([layoutItem itemRect], visibleRect))
       [self addMissingViewControllerForItemAtIndex:[layoutItem itemIndex] withFrame:[layoutItem itemRect]];
   } completionBlock:^{
     [self resizeFrameToFitContents];
@@ -596,10 +613,12 @@
 
 - (void)softReloadDataWithCompletionBlock:(dispatch_block_t)block
 {
-  NSSize cellSize = [delegate cellSizeForCollectionView:self];
-  if (NSWidth([self visibleRect]) < cellSize.width || NSHeight([self visibleRect]) < cellSize.height)
-    return;
+  //NSSize cellSize = [delegate cellSizeForCollectionView:self];
+  //if (NSWidth([self visibleRect]) < cellSize.width) // || NSHeight([self visibleRect]) < cellSize.height
+  //  return;
   
+   //CDBG()
+    
   NSRange range = [self rangeOfVisibleItemsWithOverflow];
   [layoutManager enumerateItems:^(BCCollectionViewLayoutItem *layoutItem) {
     if (NSLocationInRange([layoutItem itemIndex], range)) {
