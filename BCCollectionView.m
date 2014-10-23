@@ -362,7 +362,11 @@
         [visibleGroupViewControllers setObject:groupViewController forKey:[NSNumber numberWithInteger:idx]];
         [[groupViewController view] setFrame:groupRect];
       } else if (!groupShouldBeVisible && groupViewController) {
-        [[groupViewController view] removeFromSuperview];
+          @try {
+              [[groupViewController view] removeFromSuperview];
+          }
+          @catch (NSException *exception) {
+          }
         [visibleGroupViewControllers removeObjectForKey:[NSNumber numberWithInteger:idx]];
       }
     }];
@@ -560,13 +564,22 @@
   self.groups       = newGroups;
   self.contentArray = newContent;
   
-  for (NSViewController *viewController in [visibleGroupViewControllers allValues])
-    [[viewController view] removeFromSuperview];
+    for (NSViewController *viewController in [visibleGroupViewControllers allValues]) {
+        @try {
+            [[viewController view] removeFromSuperview];
+        }
+        @catch (NSException *exception) {
+        }
+    }
   [visibleGroupViewControllers removeAllObjects];
   
   if (shouldEmptyCaches) {
     for (NSViewController *viewController in [visibleViewControllers allValues]) {
-      [[viewController view] removeFromSuperview];
+        @try {
+            [[viewController view] removeFromSuperview];
+        }
+        @catch (NSException *exception) {
+        }
       if ([delegate respondsToSelector:@selector(collectionView:viewControllerBecameInvisible:)])
         [delegate collectionView:self viewControllerBecameInvisible:viewController];
     }
