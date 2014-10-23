@@ -138,7 +138,7 @@
   }
 
   if ([selectionIndexes count] > 0 && [self shoulDrawSelections]) {
-    for (NSNumber *number in visibleViewControllers)
+    for (NSNumber *number in visibleViewControllers.copy)
       if ([selectionIndexes containsIndex:[number integerValue]])
         [self drawItemSelectionForInRect:[[[visibleViewControllers objectForKey:number] view] frame]];
   }
@@ -292,7 +292,8 @@
   [self delegateUpdateDeselectionForItemAtIndex:anIndex];
   [self delegateViewControllerBecameInvisibleAtIndex:anIndex];
   
-  [reusableViewControllers addObject:viewController];
+  if (viewController != nil)
+      [reusableViewControllers addObject:viewController];
   [visibleViewControllers removeObjectForKey:key];
 }
 
@@ -485,9 +486,11 @@
    CDBG()
   NSMutableArray *removeKeys = [NSMutableArray array];
   
-  for (NSString *number in visibleViewControllers) {
+  for (NSString *number in visibleViewControllers.copy) {
     NSUInteger index             = [number integerValue];
     NSViewController *controller = [visibleViewControllers objectForKey:number];
+      
+      if (!controller)continue;
     
     if (index < [contentArray count]) {
       if ([selectionIndexes containsIndex:index])
@@ -534,6 +537,7 @@
   // soft reload usually means we added items to the view. which is why we won't deselect then
     if (shouldEmptyCaches)
         [self deselectAllItems];
+    
   [layoutManager cancelItemEnumerator];
   
   if (!delegate)
@@ -638,6 +642,10 @@
     if (block != NULL)
       block();
   }];
+}
+
+- (void)clearViewControllerCache {
+    [reusableViewControllers removeAllObjects];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)anEvent

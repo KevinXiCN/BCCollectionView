@@ -86,4 +86,5 @@
 - (NSViewController *)viewControllerForItemAtIndex:(NSUInteger)index;
 
 - (void)softReloadDataWithCompletionBlock:(dispatch_block_t)block;
+- (void)clearViewControllerCache;
 @end

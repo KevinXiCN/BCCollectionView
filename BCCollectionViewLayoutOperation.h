@@ -12,9 +12,12 @@ typedef void(^BCCollectionViewLayoutOperationIterator)(BCCollectionViewLayoutIte
   BCCollectionViewLayoutOperationIterator layoutCallBack;
   dispatch_block_t layoutCompletionBlock;
   BCCollectionView *__weak collectionView;
+  NSArray *__weak collectionContentArray;
 }
 @property (copy) BCCollectionViewLayoutOperationIterator layoutCallBack;
 @property (copy) dispatch_block_t layoutCompletionBlock;
 @property (weak) BCCollectionView *collectionView;
+@property (weak) NSArray *collectionContentArray;
+
 
 @end

@@ -26,12 +26,19 @@
   [queue cancelAllOperations];
 }
 
+- (void)dealloc
+{
+    [queue cancelAllOperations];
+    [queue waitUntilAllOperationsAreFinished];
+}
+
 - (void)enumerateItems:(BCCollectionViewLayoutOperationIterator)itemIterator completionBlock:(dispatch_block_t)completionBlock
 {
   BCCollectionViewLayoutOperation *operation = [[BCCollectionViewLayoutOperation alloc] init];
   [operation setCollectionView:collectionView];
   [operation setLayoutCallBack:itemIterator];
   [operation setLayoutCompletionBlock:completionBlock];
+  [operation setCollectionContentArray:collectionView.contentArray.copy];
   
 // if ([queue operationCount] > 10)
     [queue cancelAllOperations];
