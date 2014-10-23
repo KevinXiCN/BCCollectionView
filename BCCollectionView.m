@@ -287,7 +287,12 @@
 //	NSLog(@"removing view controller at index %lu", anIndex);
   NSNumber *key = [NSNumber numberWithInteger:anIndex];
   NSViewController *viewController = [visibleViewControllers objectForKey:key];
-  [[viewController view] removeFromSuperview];
+    @try {
+        // Terminating app due to uncaught exception 'NSRangeException', reason: 'Cannot remove an observer <NSScrollView 0x6000001dd1f0> for the key path "contentLayoutRect" from <NSWindow 0x6080001f3b00> because it is not registered as an observer.'
+        [[viewController view] removeFromSuperview];
+    }
+    @catch (NSException *exception) {
+    }
   
   [self delegateUpdateDeselectionForItemAtIndex:anIndex];
   [self delegateViewControllerBecameInvisibleAtIndex:anIndex];
