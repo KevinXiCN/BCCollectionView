@@ -143,8 +143,8 @@
         [self drawItemSelectionForInRect:[[[visibleViewControllers objectForKey:number] view] frame]];
   }
   
-  if (dragHoverIndex != NSNotFound && [self shoulDrawHover])
-    [self drawItemSelectionForInRect:[[[visibleViewControllers objectForKey:[NSNumber numberWithInteger:dragHoverIndex]] view] frame]];
+//  if (dragHoverIndex != NSNotFound && [self shoulDrawHover])
+//    [self drawItemSelectionForInRect:[[[visibleViewControllers objectForKey:[NSNumber numberWithInteger:dragHoverIndex]] view] frame]];
 }
 
 #pragma mark Delegate Call Wrappers
