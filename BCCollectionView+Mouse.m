@@ -16,6 +16,20 @@ BOOL firstDrag;
   return [NSEvent modifierFlags] & NSShiftKeyMask || [NSEvent modifierFlags] & NSCommandKeyMask;
 }
 
+- (void)pressureChangeWithEvent:(NSEvent *)event {
+    if ([NSApp versionIsYosemiteOrBetter]) {
+        if (event.type == 34) { // NSEventTypePressure
+            NSInteger s = [event stage];
+//            NSLog(@"stage: %li", s);
+            if (s == 2) {
+                NSUInteger anIndex = [[self selectionIndexes] firstIndex];
+                [delegate collectionView:self didDoubleClickViewControllerAtIndex:[visibleViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:anIndex]]];
+            }
+        }
+    }
+}
+
+
 - (void)mouseDown:(NSEvent *)theEvent
 {
   [[self window] makeFirstResponder:self];
