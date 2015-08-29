@@ -6,6 +6,9 @@
 #import "BCCollectionView+Dragging.h"
 #import "BCCollectionViewLayoutManager.h"
 
+// Compile time support for 10.9 and lower by not using the new names
+#define NSEventTypePressure 34
+
 @implementation BCCollectionView (BCCollectionView_Mouse)
 
 BOOL isDragging;
@@ -17,18 +20,14 @@ BOOL firstDrag;
 }
 
 - (void)pressureChangeWithEvent:(NSEvent *)event {
-    if ([NSApp versionIsYosemiteOrBetter]) {
-        if (event.type == 34) { // NSEventTypePressure
-            NSInteger s = [event stage];
-//            NSLog(@"stage: %li", s);
-            if (s == 2) {
-                NSUInteger anIndex = [[self selectionIndexes] firstIndex];
-                [delegate collectionView:self didDoubleClickViewControllerAtIndex:[visibleViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:anIndex]]];
-            }
+    if (event.type == NSEventTypePressure) {
+        NSUInteger anIndex = [[self selectionIndexes] firstIndex];
+        NSViewController *aController = [visibleViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:anIndex]];
+        if ([delegate respondsToSelector:@selector(collectionView:didReceivePressureEvent:withViewController:)]) {
+            [delegate collectionView:self didReceivePressureEvent:event withViewController:aController];
         }
     }
 }
-
 
 - (void)mouseDown:(NSEvent *)theEvent
 {

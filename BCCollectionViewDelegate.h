@@ -38,6 +38,7 @@ enum {
 
 - (void)collectionViewDidScroll:(BCCollectionView *)collectionView inDirection:(NSUInteger)scrollDirection;
 - (void)collectionView:(BCCollectionView *)collectionView didDoubleClickViewControllerAtIndex:(NSViewController *)viewController;
+- (void)collectionView:(BCCollectionView *)collectionView didReceivePressureEvent:(NSEvent*)pressureEvent withViewController:(NSViewController *)viewController;
 - (NSSize)insetMarginForSelectingItemsInCollectionView:(BCCollectionView *)collectionView;
 
 //defaults to YES

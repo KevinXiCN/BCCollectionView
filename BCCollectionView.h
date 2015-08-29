@@ -24,10 +24,11 @@
   
   NSColor *backgroundColor;
   NSUInteger  numberOfPreRenderedRows;
-  
-@private
+    
   NSPoint mouseDownLocation;
   NSPoint mouseDraggedLocation;
+  
+@private
   NSRect previousFrameBounds;
   
   NSUInteger lastSelectionIndex;
