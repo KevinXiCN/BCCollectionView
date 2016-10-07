@@ -38,7 +38,7 @@ BOOL firstDrag;
   mouseDraggedLocation = mouseDownLocation;
   NSUInteger index     = [layoutManager indexOfItemContentRectAtPoint:mouseDownLocation];
   
-  if (index != NSNotFound && [delegate respondsToSelector:@selector(collectionView:didClickItem:withViewController:)])
+  if (index != NSNotFound && index < contentArray.count && [delegate respondsToSelector:@selector(collectionView:didClickItem:withViewController:)])
     [delegate collectionView:self didClickItem:[contentArray objectAtIndex:index] withViewController:[visibleViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:index]]];
 
   // Kevin: when single click on a selected item, only the item should be selected, others

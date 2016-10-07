@@ -184,6 +184,7 @@
 
 - (void)delegateDidSelectItemAtIndex:(NSUInteger)index
 {
+    if ([contentArray count] <= index)return;
   if ([delegate respondsToSelector:@selector(collectionView:didSelectItem:withViewController:)])
     [delegate collectionView:self
          didSelectItem:[contentArray objectAtIndex:index]
@@ -192,6 +193,7 @@
 
 - (void)delegateDidDeselectItemAtIndex:(NSUInteger)index
 {
+    if ([contentArray count] <= index)return;
   if ([delegate respondsToSelector:@selector(collectionView:didDeselectItem:withViewController:)])
     [delegate collectionView:self
        didDeselectItem:[contentArray objectAtIndex:index]
@@ -200,6 +202,7 @@
 
 - (void)delegateViewControllerBecameInvisibleAtIndex:(NSUInteger)index
 {
+    if ([contentArray count] <= index)return;
   if ([delegate respondsToSelector:@selector(collectionView:viewControllerBecameInvisible:)])
     [delegate collectionView:self viewControllerBecameInvisible:[self viewControllerForItemAtIndex:index]];
 }
@@ -611,6 +614,7 @@
   
   NSRect visibleRect = [self visibleRect];
   [layoutManager enumerateItems:^(BCCollectionViewLayoutItem *layoutItem) {
+      if ([layoutItem itemIndex] >= contentArray.count) return;
     NSViewController *viewController = [self viewControllerForItemAtIndex:[layoutItem itemIndex]];
     if (viewController) {
       [[viewController view] setFrame:[layoutItem itemRect]];
