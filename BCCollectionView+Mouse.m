@@ -41,7 +41,9 @@ BOOL firstDrag;
   if (index != NSNotFound && [delegate respondsToSelector:@selector(collectionView:didClickItem:withViewController:)])
     [delegate collectionView:self didClickItem:[contentArray objectAtIndex:index] withViewController:[visibleViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:index]]];
 
-  if (![self shiftOrCommandKeyPressed] && ![selectionIndexes containsIndex:index])
+  // Kevin: when single click on a selected item, only the item should be selected, others
+  // should be deselected.
+  if (![self shiftOrCommandKeyPressed] /* && ![selectionIndexes containsIndex:index] */)
     [self deselectAllItems];
   
   self.originalSelectionIndexes = [selectionIndexes copy];
@@ -85,11 +87,14 @@ BOOL firstDrag;
   mouseDraggedLocation = BCRoundedPoint([self convertPoint:[anEvent locationInWindow] fromView:nil]);
   NSIndexSet *suggestedIndexes = [self indexesOfItemContentRectsInRect:BCRectFromTwoPoints(mouseDownLocation, mouseDraggedLocation)];
   
+  // Kevin: the `selectionIndexes` is always empty, the code below is useless.
+  /*
   if (![self shiftOrCommandKeyPressed]) {
     NSMutableIndexSet *oldIndexes = [selectionIndexes mutableCopy];
     [oldIndexes removeIndexes:suggestedIndexes];
     [self deselectItemsAtIndexes:oldIndexes];
   }
+  */
   
   [suggestedIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop){
     if ([self shiftOrCommandKeyPressed]) {

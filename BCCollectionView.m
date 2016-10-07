@@ -219,7 +219,15 @@
 {
   NSArray *itemLayouts = [layoutManager itemLayouts];
   NSIndexSet *visibleIndexes = [itemLayouts indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(id itemLayout, NSUInteger idx, BOOL *stop) {
-    return NSIntersectsRect([itemLayout itemRect], aRect);
+      
+      // Kevin: it is possible that the drag rect is empty, in this case, `NSIntersectsRect`
+      // returned NO but we excepted YES.
+      // This change will avoid the blink issue while click and select an item.
+      if (!NSIsEmptyRect(aRect)) {
+          return NSIntersectsRect([itemLayout itemRect], aRect);
+      } else {
+          return NSPointInRect(aRect.origin, [itemLayout itemRect]);
+      }
   }];
   return visibleIndexes;
 }
