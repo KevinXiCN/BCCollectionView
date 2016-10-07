@@ -78,7 +78,7 @@
 	[imageContent addObject:[NSImage imageNamed:NSImageNameStatusUnavailable]];
 	[imageContent addObject:[NSImage imageNamed:NSImageNameStatusNone]];
 	
-	[self.collectionView reloadDataWithItems:imageContent emptyCaches:NO];
+	[self.collectionView reloadDataWithItems:imageContent emptyCaches:YES];
 }
 
 #pragma mark -

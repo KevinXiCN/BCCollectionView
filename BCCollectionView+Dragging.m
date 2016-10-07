@@ -87,9 +87,9 @@
         dragData = [self.delegate collectionView:self dragDataForItemsAtIndexes:[self selectionIndexes]];
     }
 
-    
-    [pboard addTypes:[NSArray arrayWithObjects:ALBUMIMAGEDATATYPE, NSFilesPromisePboardType, nil] owner:self];
-    [pboard setData:dragData forType:ALBUMIMAGEDATATYPE];
+    // WHY?? Unknown definition `ALBUMIMAGEDATATYPE`.
+    //[pboard addTypes:[NSArray arrayWithObjects:ALBUMIMAGEDATATYPE, NSFilesPromisePboardType, nil] owner:self];
+    //[pboard setData:dragData forType:ALBUMIMAGEDATATYPE];
     
     
     NSRect itemRect;
