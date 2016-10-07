@@ -115,18 +115,28 @@ BOOL firstDrag;
 
 - (void)mouseDragged:(NSEvent *)anEvent
 {
-  [self autoscroll:anEvent];
-  
-  if (isDragging) {
-    NSUInteger index = [layoutManager indexOfItemContentRectAtPoint:mouseDownLocation];
-    if (index != NSNotFound && [selectionIndexes count] > 0 && [self delegateSupportsDragForItemsAtIndexes:selectionIndexes]) {
-      NSPoint mouse = [self convertPoint:[anEvent locationInWindow] fromView:nil];
-      CGFloat distance = sqrt(pow(mouse.x-mouseDownLocation.x,2)+pow(mouse.y-mouseDownLocation.y,2));
-      if (distance > 3)
-        [self initiateDraggingSessionWithEvent:anEvent];
-    } else
-      [self regularMouseDragged:anEvent];
-  }
+    // Kevin: keep tracking next mouse event till mouse up, this will allow the view
+    // to continuously scroll and select items, and also will give the view a chance
+    // to redraw (remove) the selection rect properly.
+    do {
+        [self autoscroll:anEvent];
+        
+        if (isDragging) {
+            NSUInteger index = [layoutManager indexOfItemContentRectAtPoint:mouseDownLocation];
+            if (index != NSNotFound && [selectionIndexes count] > 0 && [self delegateSupportsDragForItemsAtIndexes:selectionIndexes]) {
+                NSPoint mouse = [self convertPoint:[anEvent locationInWindow] fromView:nil];
+                CGFloat distance = sqrt(pow(mouse.x-mouseDownLocation.x,2)+pow(mouse.y-mouseDownLocation.y,2));
+                if (distance > 3)
+                    [self initiateDraggingSessionWithEvent:anEvent];
+            } else
+                [self regularMouseDragged:anEvent];
+        }
+        
+        anEvent = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+    } while ([anEvent type] != NSLeftMouseUp);
+    
+    // Don't forget the handle the last `mouseUp` event.
+    [self mouseUp:anEvent];
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
