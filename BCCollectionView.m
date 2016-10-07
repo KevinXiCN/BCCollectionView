@@ -6,6 +6,7 @@
 #import "BCCollectionViewLayoutManager.h"
 #import "BCCollectionViewLayoutItem.h"
 #import "BCCollectionViewGroup.h"
+#import "BCCollectionLassoView.h"
 
 @interface BCCollectionView ()
 - (void)configureView;
@@ -48,6 +49,7 @@
   numberOfPreRenderedRows     = 3;
   layoutManager               = [[BCCollectionViewLayoutManager alloc] initWithCollectionView:self];
   visibleGroupViewControllers = [[NSMutableDictionary alloc] init];
+  lassoView = [[BCCollectionLassoView alloc] initWithFrame:NSZeroRect];
 
   [self addObserver:self forKeyPath:@"backgroundColor" options:0 context:NULL];
 
@@ -132,9 +134,16 @@
   [backgroundColor ? backgroundColor : [NSColor whiteColor] set];
     NSRectFill(dirtyRect);
 
-  if ([self shouldDrawSelectionRect]) {
-    [[NSColor grayColor] set];
-    NSFrameRect(BCRectFromTwoPoints(mouseDownLocation, mouseDraggedLocation));
+  // Kevin: draw the selection rect above all subviews, this has to be a seperate subview.
+  // The style of `lassoView` is same as the one in Apple's `NSCollectionView`.
+  if ([self shouldDrawSelectionRect] && !NSEqualPoints(mouseDownLocation, mouseDraggedLocation)) {
+      NSClipView *enclosingClipView = [[self enclosingScrollView] contentView];
+      if (enclosingClipView) {
+          lassoView.frame = BCRectFromTwoPoints(mouseDownLocation, mouseDraggedLocation);
+          [enclosingClipView addSubview:lassoView];
+      }
+  } else {
+      [lassoView removeFromSuperview];
   }
 
   if ([selectionIndexes count] > 0 && [self shoulDrawSelections]) {

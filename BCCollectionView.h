@@ -8,12 +8,14 @@
 #define BCArray(args...) [NSArray arrayWithObjects:args, nil]
 #endif
 
+@class BCCollectionLassoView;
 @class BCCollectionViewLayoutManager;
 @interface BCCollectionView : NSView
 {
   IBOutlet __weak id<BCCollectionViewDelegate> delegate;
   BCCollectionViewLayoutManager *layoutManager;
-  
+  BCCollectionLassoView *lassoView;
+
   NSArray *contentArray;
   NSArray *groups;
   
